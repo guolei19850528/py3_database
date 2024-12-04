@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 import sqlite3
+from _typeshed import SupportsLenAndGetItem
 from sqlite3 import Connection, Cursor
-from typing import Iterable, Union
+from typing import Iterable, Union, Mapping
 
 from addict import Dict
+from typing_extensions import Buffer
 
 
 class CursorCallType:
@@ -16,7 +18,13 @@ class CursorCallType:
 
 
 class Database(object):
-    def __init__(self, connect_args: Iterable = (), connect_kwargs: Union[dict, Dict] = {}, *args, **kwargs):
+    def __init__(
+            self,
+            connect_args: Iterable = (),
+            connect_kwargs: Union[dict, Dict] = {},
+            *args,
+            **kwargs
+    ):
         self._connect_args: Iterable = connect_args
         self._connect_kwargs: Union[dict, Dict] = Dict(connect_kwargs)
         self._connect: Connection = None
@@ -44,7 +52,14 @@ class Database(object):
         finally:
             cursor.close()
 
-    def executemany(self, sql: str = "", seq_of_parameters=()) -> int:
+    def executemany(
+            self,
+            sql: str = "",
+            seq_of_parameters: Iterable[
+                SupportsLenAndGetItem[str | Buffer | int | float | None] | Mapping[
+                    str, str | Buffer | int | float | None]
+                ] = ()
+    ) -> int:
         try:
             cursor: Cursor = self._connect.cursor()
             cursor.executemany(sql, seq_of_parameters)
@@ -56,7 +71,13 @@ class Database(object):
         finally:
             cursor.close()
 
-    def execute(self, sql: str = "", parameters=(), cursor_call_type: int = CursorCallType.ROWCOUNT) -> int:
+    def execute(
+            self,
+            sql: str = "",
+            parameters: SupportsLenAndGetItem[str | Buffer | int | float | None] | Mapping[
+                str, str | Buffer | int | float | None] = (),
+            cursor_call_type: int = CursorCallType.ROWCOUNT
+    ) -> int:
         try:
             cursor: Cursor = self._connect.cursor()
             cursor.execute(sql, parameters)
@@ -79,14 +100,18 @@ class Database(object):
         finally:
             cursor.close()
 
-    def rowcount(self, sql: str = "", parameters=()):
+    def rowcount(self, sql: str = "", parameters: SupportsLenAndGetItem[str | Buffer | int | float | None] | Mapping[
+        str, str | Buffer | int | float | None] = ()):
         return self.execute(sql, parameters, cursor_call_type=CursorCallType.ROWCOUNT)
 
-    def lastrowid(self, sql: str = "", parameters=()):
+    def lastrowid(self, sql: str = "", parameters: SupportsLenAndGetItem[str | Buffer | int | float | None] | Mapping[
+        str, str | Buffer | int | float | None] = ()):
         return self.execute(sql, parameters, cursor_call_type=CursorCallType.LASTROWID)
 
-    def fetchall(self, sql: str = "", parameters=()):
+    def fetchall(self, sql: str = "", parameters: SupportsLenAndGetItem[str | Buffer | int | float | None] | Mapping[
+        str, str | Buffer | int | float | None] = ()):
         return self.execute(sql, parameters, cursor_call_type=CursorCallType.FETCHALL)
 
-    def fetchone(self, sql: str = "", parameters=()):
+    def fetchone(self, sql: str = "", parameters: SupportsLenAndGetItem[str | Buffer | int | float | None] | Mapping[
+        str, str | Buffer | int | float | None] = ()):
         return self.execute(sql, parameters, cursor_call_type=CursorCallType.FETCHONE)
