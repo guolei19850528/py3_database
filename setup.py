@@ -7,8 +7,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 setup(
     name="py3-database",
-    version="1.0.0",
-    description="A Database Library By Guolei",
+    version="1.0.2",
+    description="The Python3 Database Library Developed By Guolei",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/guolei19850528/py3_database",
@@ -23,6 +23,8 @@ setup(
         "duckdb",
         "diskcache",
         "addict",
+        "retrying",
+        "jsonschema",
     ],
     python_requires='>=3.0',
     zip_safe=False
